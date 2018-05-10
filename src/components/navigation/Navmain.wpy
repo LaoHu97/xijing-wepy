@@ -1,0 +1,48 @@
+<style lang="less">
+.Navmain{
+  background: #fff;
+  margin: 20rpx;
+  border-radius: 10rpx;
+  box-shadow: 0rpx 4rpx 10rpx #ddd;
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  padding: 5px;
+  .Navblock{
+    width: 180rpx;
+    height: 180rpx;
+    border: 1rpx #b2b2b2 solid;
+    margin: 20rpx 0;
+    background: #09bb07;
+  }
+  .navblock_hover{
+    background: #000
+  }
+}
+
+</style>
+<template>
+  <view class="Navmain">
+    <block wx:for="{{navList}}" wx:key="index">
+      <view class="Navblock" @tap="clickNav" hover-class="navblock_hover">
+        <text>{{item.name}}</text>
+      </view>
+    </block>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy'
+  export default class Navmain extends wepy.component {
+    props = {
+      navList: {
+        type: [Array],
+        default: []
+      }
+    }
+    methods = {
+      clickNav() {
+        console.log('123')
+      }
+    }
+  }
+</script>
