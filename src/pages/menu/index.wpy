@@ -16,15 +16,19 @@
         <view>编辑导航</view>
       </view>
       <Navmain :navList.sync="getNavList"></Navmain>
-      <Popup :showDialog.sync="getShowDialog"></Popup>
+      <Popup :showDialog.sync="getShowDialog">
+        <view slot="popupContent">
+            <PopupNavmain :navList.sync="getMoreNavList"></PopupNavmain>
+        </view>
+      </Popup>
     </view>
   </view>
 </template>
 
 <script>
   import wepy from 'wepy'
-  import Swiper from '@/components/Swiper'
-  import Navmain from '@/components/navigation/Navmain'
+  import Swiper from '@/components/Swiper/Swiper'
+  import Navmain from '@/components/Navigation/Navmain'
   import Popup from '@/components/Popup/index'
   export default class Index extends wepy.page {
     config = {
@@ -33,19 +37,21 @@
     components = {
       Swiper: Swiper,
       Navmain: Navmain,
+      PopupNavmain: Navmain,
       Popup: Popup
     }
 
     data = {
       getImgUrls: [],
       getNavList: [],
-      getShowDialog: false,
-      moreMenu: {
-        icon: '',
-        name: '更多菜单'
+      getMoreNavList: [],
+      getShowDialog: false
+    }
+    watch = {
+      getShowDialog (newValue, oldValue) {
+
       }
     }
-
     computed = {
 
     }
@@ -55,10 +61,9 @@
     }
     events = {
       'event-navmain': (navUrl) => {
-        console.log(navUrl)
         if (navUrl === 'more') {
           this.getShowDialog = true
-          console.log(this.getShowDialog)
+          console.log(`弹框出来了...${this.getShowDialog}`)
         }
       }
     }
@@ -93,8 +98,28 @@
         url: 'more',
         icon: 'http://iph.href.lu/200x200?text=icon',
         code: '11'
-      }
-      ]
+      }]
+      this.getMoreNavList = [{
+        name: 'HTML',
+        url: '/pages/Course/course',
+        icon: 'http://iph.href.lu/200x200?text=icon',
+        code: '10'
+      }, {
+        name: 'Java',
+        url: '/pages/Course/course',
+        icon: 'http://iph.href.lu/200x200?text=icon',
+        code: '11'
+      }, {
+        name: 'Java',
+        url: '/pages/Course/course',
+        icon: 'http://iph.href.lu/200x200?text=icon',
+        code: '11'
+      }, {
+        name: 'Java',
+        url: '/pages/Course/course',
+        icon: 'http://iph.href.lu/200x200?text=icon',
+        code: '11'
+      }]
     }
   }
 

@@ -81,14 +81,11 @@
   import Panel from '@/components/panel' // alias example
   import Counter from 'counter' // alias example
   import List from '../../components/list' // aliasFields example
-  import moduleA from 'module-a' // aliasFields ignore module example
   import Group from '../../components/group'
   import Toast from 'wepy-com-toast'
   import testMixin from '../../mixins/test'
 
   import {menu} from '../../api/api.js'
-
-  console.log('moduleA ignored: ', moduleA) // => moduleA ignored: {}
 
   export default class Index extends wepy.page {
     config = {
@@ -193,11 +190,11 @@
       },
       request () {
         let self = this
-        let i = 10
-        let map = ['MA==', 'MQo=', 'Mg==', 'Mw==', 'NA==', 'NQ==', 'Ng==', 'Nw==', 'OA==', 'OQ==']
+        let i = 1
+        let map = {a: '213'}
         while (i--) {
           menu(map).then((res) => {
-            console.log('123')
+            console.log(res)
             self.$apply()
           })
           // wepy.request({

@@ -13,9 +13,9 @@
 .zan-dialog__container {
   position: fixed;
   bottom: 0;
-  width: 750rpx;
+  width: 620rpx;
   background: white;
-  transform: translateX(150%);
+  transform: translateX(-150%);
   transition: all 0.4s ease;
   z-index: 12;
   height: 100%;
@@ -34,7 +34,7 @@
   <view class="zan-dialog {{ showDialog ? 'zan-dialog--show' : '' }}">
     <view class="zan-dialog__mask" bindtap="toggleDialog" />
     <view class="zan-dialog__container">
-      <view style="padding: 100px 0; text-align: center;">Dialog内容</view>
+      <slot name="popupContent"></slot>
     </view>
   </view>
 </template>
@@ -53,7 +53,6 @@
     }
     methods = {
       toggleDialog() {
-        console.log(this)
         this.showDialog = !this.showDialog
       }
     }

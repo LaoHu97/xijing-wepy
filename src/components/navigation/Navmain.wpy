@@ -6,7 +6,7 @@
   <view class="container">
     <view class="weui-grids">
       <view class="weui-grid" wx:for="{{navList}}" wx:key="name">
-        <navigator url="{{item.url+'?name='+item.name+'&code='+item.code}}" data-url="{{item.url}}"  @tap="clickNavigator">
+        <navigator url="{{item.url+'?name='+item.name+'&code='+item.code}}"  @tap="tapNavigator({{item.url}})" @longpress="longpressNavigator">
           <view class='weui-grid__bg'>
             <view class="weui-grid__icon">
               <image src=" {{item.icon}}" mode="scaleToFill" />
@@ -31,9 +31,11 @@
 
     }
     methods = {
-      clickNavigator(e) {
-        let navUrl = e.currentTarget.dataset.url
+      tapNavigator(navUrl, e) {
         this.$emit('event-navmain', navUrl)
+      },
+      longpressNavigator() {
+        console.log('长按时间超过350ms了')
       }
     }
   }
