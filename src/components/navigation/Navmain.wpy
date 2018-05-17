@@ -1,33 +1,21 @@
 <style lang="less">
-.Navmain{
-  background: #fff;
-  margin: 20rpx;
-  border-radius: 10rpx;
-  box-shadow: 0rpx 4rpx 10rpx #ddd;
-  display: flex;
-  justify-content: space-around;
-  flex-wrap: wrap;
-  padding: 5px;
-  .Navblock{
-    width: 180rpx;
-    height: 180rpx;
-    border: 1rpx #b2b2b2 solid;
-    margin: 20rpx 0;
-    background: #09bb07;
-  }
-  .navblock_hover{
-    background: #000
-  }
-}
+  @import "./Navmain.less";
 
 </style>
 <template>
-  <view class="Navmain">
-    <block wx:for="{{navList}}" wx:key="index">
-      <view class="Navblock" @tap="clickNav" hover-class="navblock_hover">
-        <text>{{item.name}}</text>
+  <view class="container">
+    <view class="weui-grids">
+      <view class="weui-grid" wx:for="{{navList}}" wx:key="name">
+        <navigator url="{{item.url+'?name='+item.name+'&code='+item.code}}" data-url="{{item.url}}"  @tap="clickNavigator">
+          <view class='weui-grid__bg'>
+            <view class="weui-grid__icon">
+              <image src=" {{item.icon}}" mode="scaleToFill" />
+            </view>
+            <text class="weui-grid__label">{{item.name}}</text>
+          </view>
+        </navigator>
       </view>
-    </block>
+    </view>
   </view>
 </template>
 <script>
@@ -39,10 +27,15 @@
         default: []
       }
     }
+    data = {
+
+    }
     methods = {
-      clickNav() {
-        console.log('123')
+      clickNavigator(e) {
+        let navUrl = e.currentTarget.dataset.url
+        this.$emit('event-navmain', navUrl)
       }
     }
   }
+
 </script>

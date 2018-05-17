@@ -1,12 +1,11 @@
 <style lang="less">
-.nav_top{
-  height: 100rpx;
-  // border: 1rpx solid #b2b2b2;
-  background: #fff;
-  display: flex;
-  justify-content: space-around;
-  line-height: 100rpx;
-}
+  .nav_top {
+    height: 100rpx; // border: 1rpx solid #b2b2b2;
+    background: #fff;
+    display: flex;
+    justify-content: space-around;
+    line-height: 100rpx;
+  }
 </style>
 <template>
   <view>
@@ -17,6 +16,7 @@
         <view>编辑导航</view>
       </view>
       <Navmain :navList.sync="getNavList"></Navmain>
+      <Popup :showDialog.sync="getShowDialog"></Popup>
     </view>
   </view>
 </template>
@@ -25,18 +25,25 @@
   import wepy from 'wepy'
   import Swiper from '@/components/Swiper'
   import Navmain from '@/components/navigation/Navmain'
+  import Popup from '@/components/Popup/index'
   export default class Index extends wepy.page {
     config = {
       navigationBarTitleText: '功能'
     }
     components = {
       Swiper: Swiper,
-      Navmain: Navmain
+      Navmain: Navmain,
+      Popup: Popup
     }
 
     data = {
       getImgUrls: [],
-      getNavList: []
+      getNavList: [],
+      getShowDialog: false,
+      moreMenu: {
+        icon: '',
+        name: '更多菜单'
+      }
     }
 
     computed = {
@@ -46,21 +53,49 @@
     methods = {
 
     }
-
+    events = {
+      'event-navmain': (navUrl) => {
+        console.log(navUrl)
+        if (navUrl === 'more') {
+          this.getShowDialog = true
+          console.log(this.getShowDialog)
+        }
+      }
+    }
     onLoad() {
       this.getImgUrls = [
         'http://img02.tooopen.com/images/20150928/tooopen_sy_143912755726.jpg',
         'http://img06.tooopen.com/images/20160818/tooopen_sy_175866434296.jpg',
         'http://img06.tooopen.com/images/20160818/tooopen_sy_175833047715.jpg'
       ]
-      this.getNavList = [
-        {name: '1'},
-        {name: '2'},
-        {name: '3'},
-        {name: '4'},
-        {name: '5'},
-        {name: '6'}
+      this.getNavList = [{
+        name: 'HTML',
+        url: '/pages/Course/course',
+        icon: 'http://iph.href.lu/200x200?text=icon',
+        code: '10'
+      }, {
+        name: 'Java',
+        url: '/pages/Course/course',
+        icon: 'http://iph.href.lu/200x200?text=icon',
+        code: '11'
+      }, {
+        name: 'Java',
+        url: '/pages/Course/course',
+        icon: 'http://iph.href.lu/200x200?text=icon',
+        code: '11'
+      }, {
+        name: 'Java',
+        url: '/pages/Course/course',
+        icon: 'http://iph.href.lu/200x200?text=icon',
+        code: '11'
+      }, {
+        name: '更多',
+        url: 'more',
+        icon: 'http://iph.href.lu/200x200?text=icon',
+        code: '11'
+      }
       ]
     }
   }
+
 </script>
