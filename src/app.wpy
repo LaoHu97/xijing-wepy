@@ -10,29 +10,30 @@ export default class extends wepy.app {
   config = {
     pages: [
       'pages/menu/index',
-      'pages/index/index'
+      'pages/index/index',
+      'pages/menu/webview'
     ],
     window: {
       backgroundTextStyle: 'dark',
-      navigationBarBackgroundColor: '#09bb07',
+      navigationBarBackgroundColor: '#efeff4',
       navigationBarTitleText: 'WeChat',
-      navigationBarTextStyle: 'white',
+      navigationBarTextStyle: 'black',
       enablePullDownRefresh: true
     },
     tabBar: {
       list: [{
+        pagePath: 'pages/menu/index',
+        text: '首页',
+        iconPath: './assets/icons/app.png',
+        selectedIconPath: './assets/icons/app (1).png'
+      }, {
         pagePath: 'pages/index/index',
         text: '首页',
         iconPath: './assets/icons/home.png',
         selectedIconPath: './assets/icons/home (1).png'
-      }, {
-        pagePath: 'pages/menu/index',
-        text: '功能',
-        iconPath: './assets/icons/app.png',
-        selectedIconPath: './assets/icons/app (1).png'
       }],
-      color: '#b2b2b2',
-      selectedColor: '#09bb07'
+      color: '#7f8389',
+      selectedColor: '#3366cc'
     }
   }
 

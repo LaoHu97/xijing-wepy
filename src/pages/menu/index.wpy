@@ -11,10 +11,6 @@
   <view>
     <Swiper :imgUrls.sync="getImgUrls"></Swiper>
     <view>
-      <view class="nav_top">
-        <view>导航列表</view>
-        <view>编辑导航</view>
-      </view>
       <Navmain :navList.sync="getNavList"></Navmain>
       <Popup :showDialog.sync="getShowDialog">
         <view slot="popupContent">
@@ -32,7 +28,7 @@
   import Popup from '@/components/Popup/index'
   export default class Index extends wepy.page {
     config = {
-      navigationBarTitleText: '功能'
+      navigationBarTitleText: '西京'
     }
     components = {
       Swiper: Swiper,
@@ -61,10 +57,10 @@
     }
     events = {
       'event-navmain': (navUrl) => {
-        if (navUrl === 'more') {
-          this.getShowDialog = true
-          console.log(`弹框出来了...${this.getShowDialog}`)
-        }
+        // if (navUrl === 'more') {
+        //   this.getShowDialog = true
+        //   console.log(`弹框出来了...${this.getShowDialog}`)
+        // }
       }
     }
     onLoad() {
@@ -74,23 +70,23 @@
         'http://img06.tooopen.com/images/20160818/tooopen_sy_175833047715.jpg'
       ]
       this.getNavList = [{
-        name: 'HTML',
-        url: '/pages/Course/course',
+        name: '服务中心',
+        url: 'https://dev.weupay.com/pay/web/shop.html',
         icon: 'http://iph.href.lu/200x200?text=icon',
         code: '10'
       }, {
         name: 'Java',
-        url: '/pages/Course/course',
+        url: 'https://www.baidu.com',
         icon: 'http://iph.href.lu/200x200?text=icon',
         code: '11'
       }, {
         name: 'Java',
-        url: '/pages/Course/course',
+        url: 'https://www.baidu.com',
         icon: 'http://iph.href.lu/200x200?text=icon',
         code: '11'
       }, {
         name: 'Java',
-        url: '/pages/Course/course',
+        url: 'https://www.baidu.com',
         icon: 'http://iph.href.lu/200x200?text=icon',
         code: '11'
       }, {
@@ -104,21 +100,6 @@
         url: '/pages/Course/course',
         icon: 'http://iph.href.lu/200x200?text=icon',
         code: '10'
-      }, {
-        name: 'Java',
-        url: '/pages/Course/course',
-        icon: 'http://iph.href.lu/200x200?text=icon',
-        code: '11'
-      }, {
-        name: 'Java',
-        url: '/pages/Course/course',
-        icon: 'http://iph.href.lu/200x200?text=icon',
-        code: '11'
-      }, {
-        name: 'Java',
-        url: '/pages/Course/course',
-        icon: 'http://iph.href.lu/200x200?text=icon',
-        code: '11'
       }]
     }
   }
