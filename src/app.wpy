@@ -19,22 +19,22 @@ export default class extends wepy.app {
       navigationBarTitleText: 'WeChat',
       navigationBarTextStyle: 'black',
       enablePullDownRefresh: true
-    },
-    tabBar: {
-      list: [{
-        pagePath: 'pages/menu/index',
-        text: '首页',
-        iconPath: './assets/icons/app.png',
-        selectedIconPath: './assets/icons/app (1).png'
-      }, {
-        pagePath: 'pages/index/index',
-        text: '首页',
-        iconPath: './assets/icons/home.png',
-        selectedIconPath: './assets/icons/home (1).png'
-      }],
-      color: '#7f8389',
-      selectedColor: '#3366cc'
     }
+    // tabBar: {
+    //   list: [{
+    //     pagePath: 'pages/menu/index',
+    //     text: '首页',
+    //     iconPath: './assets/icons/app.png',
+    //     selectedIconPath: './assets/icons/app (1).png'
+    //   }, {
+    //     pagePath: 'pages/index/index',
+    //     text: '首页',
+    //     iconPath: './assets/icons/home.png',
+    //     selectedIconPath: './assets/icons/home (1).png'
+    //   }],
+    //   color: '#7f8389',
+    //   selectedColor: '#3366cc'
+    // }
   }
 
   globalData = {

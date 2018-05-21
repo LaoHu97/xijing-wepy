@@ -1,11 +1,5 @@
 <style lang="less">
-  .nav_top {
-    height: 100rpx; // border: 1rpx solid #b2b2b2;
-    background: #fff;
-    display: flex;
-    justify-content: space-around;
-    line-height: 100rpx;
-  }
+  @import './index.less';
 </style>
 <template>
   <view>
@@ -18,6 +12,32 @@
         </view>
       </Popup>
     </view>
+    <view class="scroll_view_main">
+      <view class="scroll_view_top">
+        <text>新闻资讯</text>
+      </view>
+      <scroll-view scroll-y class="scroll_view">
+        <view class="news_tabs-view" wx:for="{{newTabs}}" wx:key="{{index}}">
+          <block>
+            <view>{{item.title}}</view>
+            <view class="news_tabs_view_date">{{item.date}}</view>
+          </block>
+        </view>
+      </scroll-view>
+    </view>
+    <view class="scroll_view_main">
+      <view class="scroll_view_top">
+        <text>最新公告</text>
+      </view>
+      <scroll-view scroll-y class="scroll_view">
+        <view class="news_tabs-view" wx:for="{{newTabs}}" wx:key="{{index}}">
+          <block>
+            <view>{{item.title}}</view>
+            <view class="news_tabs_view_date">{{item.date}}</view>
+          </block>
+        </view>
+      </scroll-view>
+    </view>
   </view>
 </template>
 
@@ -28,7 +48,7 @@
   import Popup from '@/components/Popup/index'
   export default class Index extends wepy.page {
     config = {
-      navigationBarTitleText: '西京'
+      navigationBarTitleText: '西京小勤'
     }
     components = {
       Swiper: Swiper,
@@ -41,7 +61,26 @@
       getImgUrls: [],
       getNavList: [],
       getMoreNavList: [],
-      getShowDialog: false
+      getShowDialog: false,
+      newTabs: [{
+        title: '我校入选教育部“互联网+中国制造2025”产教融合促进计划试点院校',
+        date: '2018-05-16'
+      }, {
+        title: '我校入选教育部“互联网+中国制造2025”产教融合促进计划试点院校',
+        date: '2018-05-16'
+      }, {
+        title: '我校入选教育部“互联网+中国制造2025”产教融合促进计划试点院校',
+        date: '2018-05-16'
+      }, {
+        title: '我校入选教育部“互联网+中国制造2025”产教融合促进计划试点院校',
+        date: '2018-05-16'
+      }, {
+        title: '我校入选教育部“互联网+中国制造2025”产教融合促进计划试点院校',
+        date: '2018-05-16'
+      }, {
+        title: '我校入选教育部“互联网+中国制造2025”产教融合促进计划试点院校',
+        date: '2018-05-16'
+      }]
     }
     watch = {
       getShowDialog (newValue, oldValue) {
@@ -74,6 +113,26 @@
         url: 'https://dev.weupay.com/pay/web/shop.html',
         icon: 'http://iph.href.lu/200x200?text=icon',
         code: '10'
+      }, {
+        name: 'Java',
+        url: 'https://www.baidu.com',
+        icon: 'http://iph.href.lu/200x200?text=icon',
+        code: '11'
+      }, {
+        name: 'Java',
+        url: 'https://www.baidu.com',
+        icon: 'http://iph.href.lu/200x200?text=icon',
+        code: '11'
+      }, {
+        name: 'Java',
+        url: 'https://www.baidu.com',
+        icon: 'http://iph.href.lu/200x200?text=icon',
+        code: '11'
+      }, {
+        name: 'Java',
+        url: 'https://www.baidu.com',
+        icon: 'http://iph.href.lu/200x200?text=icon',
+        code: '11'
       }, {
         name: 'Java',
         url: 'https://www.baidu.com',
