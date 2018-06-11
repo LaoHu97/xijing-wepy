@@ -18,10 +18,12 @@
       </view>
       <scroll-view scroll-y class="scroll_view">
         <view class="news_tabs-view" wx:for="{{newTabs}}" wx:key="{{index}}">
-          <block>
-            <view>{{item.title}}</view>
-            <view class="news_tabs_view_date">{{item.date}}</view>
-          </block>
+          <navigator url="webview?url={{item.url}}">
+            <block>
+              <view>{{item.title}}</view>
+              <view class="news_tabs_view_date">{{item.date}}</view>
+            </block>
+          </navigator>
         </view>
       </scroll-view>
     </view>
@@ -64,9 +66,11 @@
       getShowDialog: false,
       newTabs: [{
         title: '我校入选教育部“互联网+中国制造2025”产教融合促进计划试点院校',
+        url: 'http://www.baidu.com',
         date: '2018-05-16'
       }, {
         title: '我校入选教育部“互联网+中国制造2025”产教融合促进计划试点院校',
+        url: 'https://mp.weixin.qq.com/s/ON95CZ3ia6mom_uHBwUmYQ',
         date: '2018-05-16'
       }, {
         title: '我校入选教育部“互联网+中国制造2025”产教融合促进计划试点院校',
