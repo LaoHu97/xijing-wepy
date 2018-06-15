@@ -31,16 +31,16 @@
     methods = {
 
     }
-    getNews() {
+    async getNews() {
       let para = {
         id: this.id
       }
       getNewDetail(para).then(res => {
         if (res.status === 200) {
           wepy.setNavigationBarTitle({
-            title: res.data.wdMiniNews.title
+            title: res.data.title
           })
-          this.textContent = res.data.wdMiniNews.title_contents
+          this.textContent = res.data.title_contents
           // 更新
           this.$apply()
           // 调用通知接口通知组件更新数据
@@ -51,6 +51,13 @@
     onPullDownRefresh() {
       this.getNews()
       wepy.stopPullDownRefresh()
+      setTimeout(() => {
+        wepy.showToast({
+          title: '刷新成功',
+          icon: 'success',
+          duration: 2000
+        })
+      }, 500)
     }
     onReady() {
       this.getNews()

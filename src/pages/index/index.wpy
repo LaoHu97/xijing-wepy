@@ -1,242 +1,151 @@
-<style lang="less">
-  .userinfo {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+<style>
+  @import './weui/weui-navbar.wxss';
+  .container,
+  .weui-tab,
+  .weui-tab__panel {
+    height: 100%;
+  }
+  .weui-navbar{
+    background: #fff;
+  }
+  .weui-tab__content {
+    padding-top: 120rpx;
+    background: #fff;
   }
 
-  .userinfo-avatar {
-    width: 80rpx;
-    height: 80rpx;
-    border-radius: 50%;
-  }
-
-  .userinfo-nickname {
-    color: #aaa;
-  }
 </style>
 <template>
   <view class="container">
-    <view class="userinfo" @tap="handleViewTap">
-      <image class="userinfo-avatar" src="{{ userInfo.avatarUrl }}" background-size="cover"/>
-      <view class="userinfo-nickname">{{ userInfo.nickName }}</view>
+    <view class="weui-tab">
+      <view class="weui-navbar">
+        <block wx:for="{{tabs}}" wx:key="{{item.value}}">
+          <view id="{{index}}" class="weui-navbar__item {{activeIndex == index ? 'weui-bar__item_on' : ''}}" bindtap="tabClick({{item.value}})">
+            <view class="weui-navbar__title">{{item.lable}}</view>
+          </view>
+        </block>
+        <view class="weui-navbar__slider" style="left: {{sliderLeft}}px; transform: translateX({{sliderOffset}}px); -webkit-transform: translateX({{sliderOffset}}px);"></view>
+      </view>
+      <view class="weui-tab__panel">
+        <newsScrollView class="weui-tab__content" :newTabs.sync="newTabs" :hideBottom.sync="hideBottom" :refreshTime.sync="refreshTime"
+          :allPages.sync="allPages" :currentPage.sync="currentPage" :loadMoreData.sync="loadMoreData"></newsScrollView>
+      </view>
     </view>
-
-    <panel>
-      <view class="title" slot="title">测试数据绑定</view>
-      <text class="info">{{normalTitle}}</text>
-      <text class="info">{{setTimeoutTitle}}</text>
-      <text class="info">{{mixin}}</text>
-      <text class="info">{{mynum}}</text>
-      <text class="info">{{now}}</text>
-      <button @tap="plus('a')" size="mini">  +  </button>
-    </panel>
-
-    <panel>
-      <view class="title" slot="title">其它测试</view>
-      <button @tap="toast" size="mini">第三方组件</button>
-      <button @tap="communicate" size="mini">组件通信</button>
-      <button @tap="tap" size="mini">混合TAP事件</button>
-    </panel>
-
-    <panel>
-      <view class="title" slot="title">测试并发网络请求</view>
-      <view>返回结果: <text>{{netrst}}</text></view>
-      <button @tap="request" size="mini"> 点我发起10个请求 </button>
-    </panel>
-
-    <panel>
-      <view class="title" slot="title">测试组件</view>
-
-      <text class="testcounter">计数组件1: </text>
-      <view class="counterview">
-        <counter1 :num.sync="counterEmit"></counter1>
-      </view>
-
-      <text class="testcounter">计数组件2: </text>
-
-      <view class="counterview">
-        <counter2 :num.sync="mynum"></counter2>
-      </view>
-    </panel>
-
-    <panel>
-      <view class="title" slot="title">测试组件Repeat</view>
-      <repeat for="" index="index" item="item" key="key">
-        <group :grouplist="item" :indexa="index"></group>
-      </repeat>
-    </panel>
-
-    <panel>
-      <view class="title" slot="title">测试列表</view>
-      <list></list>
-    </panel>
-
-    <toast />
   </view>
 </template>
 
 <script>
   import wepy from 'wepy'
-  import Panel from '@/components/panel' // alias example
-  import Counter from 'counter' // alias example
-  import List from '../../components/list' // aliasFields example
-  import Group from '../../components/group'
-  import Toast from 'wepy-com-toast'
-  import testMixin from '../../mixins/test'
-
-  import {menu} from '../../api/api.js'
+  import newsScrollView from '@/components/newsScrollView/index'
+  import * as util from '../../lib/util.js'
+  import {
+    queryAppNews
+  } from '../../api/api.js'
 
   export default class Index extends wepy.page {
     config = {
-      navigationBarTitleText: '首页'
+      navigationBarTitleText: '最新资讯'
     }
     components = {
-      panel: Panel,
-      counter1: Counter,
-      counter2: Counter,
-      list: List,
-      group: Group,
-      toast: Toast
+      newsScrollView: newsScrollView
     }
-
-    mixins = [testMixin]
 
     data = {
-      mynum: 20,
-      userInfo: {
-        nickName: '加载中...'
-      },
-      normalTitle: '原始标题',
-      setTimeoutTitle: '标题三秒后会被修改',
-      count: 0,
-      netrst: '',
-      groupList: [
-        {
-          id: 1,
-          name: '点击改变',
-          list: [
-            {
-              childid: '1.1',
-              childname: '子项，点我改变'
-            }, {
-              childid: '1.2',
-              childname: '子项，点我改变'
-            }, {
-              childid: '1.3',
-              childname: '子项，点我改变'
-            }
-          ]
-        },
-        {
-          id: 2,
-          name: '点击改变',
-          list: [
-            {
-              childid: '2.1',
-              childname: '子项，点我改变'
-            }, {
-              childid: '2.2',
-              childname: '子项，点我改变'
-            }, {
-              childid: '2.3',
-              childname: '子项，点我改变'
-            }
-          ]
-        },
-        {
-          id: 3,
-          name: '点击改变',
-          list: [
-            {
-              childid: '3.1',
-              childname: '子项，点我改变'
-            }
-          ]
-        }
-      ]
+      tabs: [{
+        lable: '最新新闻',
+        value: 1
+      }, {
+        lable: '最新公告',
+        value: 2
+      }],
+      activeIndex: 0,
+      sliderOffset: 0,
+      sliderLeft: 0,
+      newsType: 1,
+      hideBottom: true,
+      refreshTime: '',
+      newTabs: [],
+      allPages: '',
+      currentPage: 1,
+      loadMoreData: '加载更多……'
     }
-
-    computed = {
-      now () {
-        return +new Date()
-      }
-    }
-
     methods = {
-      plus () {
-        this.mynum++
-      },
-      toast () {
-        let promise = this.$invoke('toast', 'show', {
-          title: '自定义标题',
-          img: 'https://raw.githubusercontent.com/kiinlam/wetoast/master/images/star.png'
-        })
-
-        promise.then((d) => {
-          console.log('toast done')
-        })
-      },
-      tap () {
-        console.log('do noting from ' + this.$name)
-      },
-      communicate () {
-        console.log(this.$name + ' tap')
-
-        this.$invoke('counter2', 'minus', 45, 6)
-        this.$invoke('counter1', 'plus', 45, 6)
-
-        this.$broadcast('index-broadcast', 1, 3, 4)
-      },
-      request () {
-        let self = this
-        let i = 1
-        let map = {a: '213'}
-        while (i--) {
-          menu(map).then((res) => {
-            console.log(res)
-            self.$apply()
-          })
-          // wepy.request({
-          //   url: 'https://test.weupay.com/pay/syscore/menu?time=1&t=css&c=' + map[i] + '&i=' + i,
-          //   success: function (d) {
-          //     self.netrst += d.data + '.'
-          //     self.$apply()
-          //   }
-          // })
-        }
-      },
-      counterEmit (...args) {
-        let $event = args[args.length - 1]
-        console.log(`${this.$name} receive ${$event.name} from ${$event.source.$name}`)
+      tabClick: function (data, e) {
+        this.newTabs = []
+        this.currentPage = 1
+        this.sliderOffset = e.currentTarget.offsetLeft
+        this.activeIndex = e.currentTarget.id
+        this.newsType = data
+        this.getData(data)
       }
     }
-
-    events = {
-      'index-emit': (...args) => {
-        let $event = args[args.length - 1]
-        console.log(`${this.$name} receive ${$event.name} from ${$event.source.$name}`)
+    getData(type) {
+      let getExtConfig = wepy.getExtConfigSync ? wepy.getExtConfigSync() : {}
+      let para = {
+        mid: getExtConfig.businessInfo.mid,
+        title_type: type,
+        numPerPage: '10',
+        page: this.currentPage
       }
-    }
-
-    onLoad() {
-      console.log(this)
-      let self = this
-      this.$parent.getUserInfo(function (userInfo) {
-        console.log(userInfo)
-        if (userInfo) {
-          self.userInfo = userInfo
+      queryAppNews(para).then(res => {
+        let tempArray = this.newTabs
+        tempArray = tempArray.concat(res.data.miniNewsList)
+        this.allPages = res.data.totalCount
+        for (let i = 0; i < tempArray.length; i++) {
+          let element = tempArray[i].gmt_create
+          tempArray[i].gmt_create = util.formatDate.format(new Date(element), 'yyyy-MM-dd')
         }
-        self.normalTitle = '标题已被修改'
-
-        self.setTimeoutTitle = '标题三秒后会被修改'
-        setTimeout(() => {
-          self.setTimeoutTitle = '到三秒了'
-          self.$apply()
-        }, 3000)
-
-        self.$apply()
+        this.newTabs = tempArray
+        if (this.allPages === this.newTabs.length) {
+          this.hideBottom = false
+          this.loadMoreData = '没有更多了'
+        } else {
+          this.hideBottom = true
+        }
+        this.$apply()
       })
     }
+    async startTop() {
+      var self = this
+      // 当前页是最后一页
+      if (self.newTabs.length === self.allPages) {
+        self.hideBottom = false
+        self.loadMoreData = '没有更多了'
+        return
+      }
+      let tempCurrentPage = self.currentPage
+      tempCurrentPage = tempCurrentPage + 1
+      self.currentPage = tempCurrentPage
+      self.hideBottom = false
+      self.getData(this.newsType)
+      self.$apply()
+    }
+    onPullDownRefresh() {
+      console.log('我被拉到顶了')
+      this.newTabs = []
+      this.currentPage = 1
+      this.getData(this.newsType)
+      wepy.stopPullDownRefresh()
+      setTimeout(() => {
+        wepy.showToast({
+          title: '刷新成功',
+          icon: 'success',
+          duration: 2000
+        })
+      }, 500)
+    }
+    onReachBottom() {
+      console.log('我被拉到底了')
+      this.startTop()
+    }
+    async onLoad() {
+      var date = new Date()
+      this.refreshTime = date.toLocaleTimeString()
+      this.getData(1)
+      let getSystemInfo = await wepy.getSystemInfo()
+      let sliderWidth = getSystemInfo.windowWidth / 2 - 70
+      this.sliderLeft = (getSystemInfo.windowWidth / this.tabs.length - sliderWidth) / 2
+      this.sliderOffset = getSystemInfo.windowWidth / this.tabs.length * this.activeIndex
+    }
   }
+
 </script>

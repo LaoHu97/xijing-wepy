@@ -4,11 +4,7 @@
 </style>
 <template>
   <view class="scroll_view_main">
-    <view class="scroll_view_top">
-      <text>{{newsTitle}}</text>
-    </view>
-    <scroll-view scroll-y bindscrolltolower="loadMore" class="scroll_view">
-      <view class="news_tabs-view" wx:for="{{newTabs}}" wx:key="{{index}}"  @tap="tapNewsScrollView({{item}})">
+      <view class="news_tabs-view" wx:for="{{newTabs}}" wx:key="{{index}}" @tap="tapNewsScrollView({{item}})">
         <block>
           <view>{{item.title}}</view>
           <view class="news_tabs_view_date">{{item.gmt_create}}</view>
@@ -18,7 +14,6 @@
         <view>{{loadMoreData}}</view>
         <view>{{refreshTime}}</view>
       </view>
-    </scroll-view>
   </view>
 </template>
 <script>
@@ -48,38 +43,23 @@
       loadMoreData: {
         type: [String],
         default: '加载更多……'
-      },
-      newsType: {
-        type: [Number],
-        default: ''
-      },
-      newsTitle: {
-        type: [String],
-        default: ''
       }
     }
     data = {
 
     }
     methods = {
-      loadMore() {
-        this.$emit('event-getData', this.newsType)
-      },
       tapNewsScrollView(item) {
-        console.log(item)
         if (item.title_url) {
           wepy.navigateTo({
-            url: 'webview?url=' + item.title_url
+            url: '/pages/miniviews/webview?url=' + item.title_url
           })
         } else {
           wepy.navigateTo({
-            url: 'newsview?id=' + item.id
+            url: '/pages/miniviews/newsview?id=' + item.id
           })
         }
       }
-    }
-    onLoad(options) {
-
     }
   }
 

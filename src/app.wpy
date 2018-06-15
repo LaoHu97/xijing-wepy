@@ -1,120 +1,99 @@
 <style lang="less">
   @import "./less/config";
+
 </style>
 
 <script>
-import wepy from 'wepy'
-import 'wepy-async-function'
+  import wepy from 'wepy'
+  import 'wepy-async-function'
 
-export default class extends wepy.app {
-  config = {
-    pages: [
-      'pages/menu/index',
-      'pages/index/index',
-      'pages/menu/webview',
-      'pages/menu/newsview'
-    ],
-    window: {
-      backgroundTextStyle: 'dark',
-      navigationBarBackgroundColor: '#efeff4',
-      navigationBarTitleText: 'WeChat',
-      navigationBarTextStyle: 'black',
-      enablePullDownRefresh: true
-    }
-    // tabBar: {
-    //   list: [{
-    //     pagePath: 'pages/menu/index',
-    //     text: '首页',
-    //     iconPath: './assets/icons/app.png',
-    //     selectedIconPath: './assets/icons/app (1).png'
-    //   }, {
-    //     pagePath: 'pages/index/index',
-    //     text: '首页',
-    //     iconPath: './assets/icons/home.png',
-    //     selectedIconPath: './assets/icons/home (1).png'
-    //   }],
-    //   color: '#7f8389',
-    //   selectedColor: '#3366cc'
-    // }
-  }
-
-  globalData = {
-    userInfo: null
-  }
-
-  constructor () {
-    super()
-    // 拦截request请求
-    this.intercept('request', {
-      // 发出请求时的回调函数
-      config(p) {
-        // 增加请求时Loading
-        wepy.showLoading({
-          title: '加载中',
-          mask: true
-        })
-        // console.log('请求头: ', p)
-        // 必须返回OBJECT参数对象，否则无法发送请求到服务端
-        return p
+  export default class extends wepy.app {
+    config = {
+      pages: [
+        'pages/menu/index',
+        'pages/index/index',
+        'pages/miniviews/webview',
+        'pages/miniviews/newsview'
+      ],
+      window: {
+        backgroundTextStyle: 'dark',
+        navigationBarBackgroundColor: '#efeff4',
+        navigationBarTitleText: 'WeChat',
+        navigationBarTextStyle: 'black',
+        enablePullDownRefresh: true
       },
-
-      // 请求成功后的回调函数
-      success(p) {
-        // 可以在这里对收到的响应数据对象进行加工处理
-        console.log('请求成功: ', p)
-        // 必须返回响应数据对象，否则后续无法对响应数据进行处理
-        return p
-      },
-
-      // 请求失败后的回调函数
-      fail(p) {
-        console.log('请求失败: ', p)
-        wepy.showToast({
-          title: '请检查网络连接',
-          icon: 'none',
-          duration: 2000
-        })
-        // 必须返回响应数据对象，否则后续无法对响应数据进行处理
-        return p
-      },
-
-      // 请求完成时的回调函数(请求成功或失败都会被执行)
-      complete(p) {
-        wepy.hideLoading()
-        console.log('请求完成: ', p)
+      tabBar: {
+        list: [{
+          pagePath: 'pages/menu/index',
+          text: '首页',
+          iconPath: './assets/icons/app.png',
+          selectedIconPath: './assets/icons/app (1).png'
+        }, {
+          pagePath: 'pages/index/index',
+          text: '资讯',
+          iconPath: './assets/icons/home.png',
+          selectedIconPath: './assets/icons/home (1).png'
+        }],
+        color: '#7f8389',
+        selectedColor: '#3366cc'
       }
-    })
-    this.use('promisify')
-  }
-
-  onLaunch(options) {
-    this.testAsync()
-  }
-
-  sleep (s) {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        resolve('promise resolved')
-      }, s * 1000)
-    })
-  }
-
-  async testAsync () {
-    const data = await this.sleep(3)
-    console.log(data)
-  }
-
-  getUserInfo(cb) {
-    const that = this
-    if (this.globalData.userInfo) {
-      return this.globalData.userInfo
     }
-    wepy.getUserInfo({
-      success (res) {
-        that.globalData.userInfo = res.userInfo
-        cb && cb(res.userInfo)
-      }
-    })
+
+    globalData = {
+      userInfo: null
+    }
+
+    constructor() {
+      super()
+      // 拦截request请求
+      this.intercept('request', {
+        // 发出请求时的回调函数
+        config(p) {
+          // 增加请求时Loading
+          wepy.showLoading({
+            title: '加载中',
+            mask: true
+          })
+          // console.log('请求头: ', p)
+          // 必须返回OBJECT参数对象，否则无法发送请求到服务端
+          return p
+        },
+
+        // 请求成功后的回调函数
+        success(p) {
+          // 可以在这里对收到的响应数据对象进行加工处理
+          console.log('请求成功: ', p)
+          if (p.statusCode !== 200) {
+            wepy.showToast({
+              title: '服务器错误，请稍候再试',
+              icon: 'none',
+              duration: 2000
+            })
+          }
+          // 必须返回响应数据对象，否则后续无法对响应数据进行处理
+          return p
+        },
+
+        // 请求失败后的回调函数
+        fail(p) {
+          console.log('请求失败: ', p)
+          wepy.showToast({
+            title: '请检查网络连接',
+            icon: 'none',
+            duration: 2000
+          })
+          // 必须返回响应数据对象，否则后续无法对响应数据进行处理
+          return p
+        },
+
+        // 请求完成时的回调函数(请求成功或失败都会被执行)
+        complete(p) {
+          wepy.hideLoading()
+          console.log('请求完成: ', p)
+        }
+      })
+      this.use('promisify')
+    }
   }
-}
+
 </script>

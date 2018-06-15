@@ -10,19 +10,6 @@
     data = {
       weburl: ''
     }
-    watch = {
-
-    }
-    computed = {
-
-    }
-
-    methods = {
-
-    }
-    events = {
-
-    }
     onLoad(option) {
       this.weburl = option.url
     }
