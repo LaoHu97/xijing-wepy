@@ -1,0 +1,63 @@
+<style lang="less">
+.newsMain{
+  padding: 10px;
+}
+</style>
+
+<template>
+  <view class="newsMain">
+    <Htmlwxml :parserName="name" :parserContent.sync="textContent"></Htmlwxml>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import Htmlwxml from '../../components/Htmlwxml/index'
+  import {
+    getNewDetail
+  } from '../../api/api.js'
+  export default class newsview extends wepy.page {
+    components = {
+      Htmlwxml: Htmlwxml
+    }
+    config = {
+      navigationBarTitleText: ''
+    }
+    data = {
+      name: 'myHtmlParserKiner',
+      id: '',
+      textContent: ''
+    }
+    methods = {
+
+    }
+    getNews() {
+      let para = {
+        id: this.id
+      }
+      getNewDetail(para).then(res => {
+        if (res.status === 200) {
+          wepy.setNavigationBarTitle({
+            title: res.data.wdMiniNews.title
+          })
+          this.textContent = res.data.wdMiniNews.title_contents
+          // 更新
+          this.$apply()
+          // 调用通知接口通知组件更新数据
+          this.$invoke('Htmlwxml', 'htmlParserNotice')
+        }
+      })
+    }
+    onPullDownRefresh() {
+      this.getNews()
+      wepy.stopPullDownRefresh()
+    }
+    onReady() {
+      this.getNews()
+    }
+    onLoad(option) {
+      this.id = option.id
+    }
+  }
+
+</script>

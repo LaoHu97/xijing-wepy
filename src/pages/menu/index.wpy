@@ -1,45 +1,23 @@
 <style lang="less">
   @import './index.less';
+
 </style>
 <template>
   <view>
     <Swiper :imgUrls.sync="getImgUrls"></Swiper>
     <view>
-      <Navmain :navList.sync="getNavList"></Navmain>
+      <Navmain :navList.sync="getNavList" :navWidth.sync="getNavWidth"></Navmain>
       <Popup :showDialog.sync="getShowDialog">
         <view slot="popupContent">
-            <PopupNavmain :navList.sync="getMoreNavList"></PopupNavmain>
+          <PopupNavmain :navList.sync="getMoreNavList"></PopupNavmain>
         </view>
       </Popup>
     </view>
-    <view class="scroll_view_main">
-      <view class="scroll_view_top">
-        <text>新闻资讯</text>
-      </view>
-      <scroll-view scroll-y class="scroll_view">
-        <view class="news_tabs-view" wx:for="{{newTabs}}" wx:key="{{index}}">
-          <navigator url="webview?url={{item.url}}">
-            <block>
-              <view>{{item.title}}</view>
-              <view class="news_tabs_view_date">{{item.date}}</view>
-            </block>
-          </navigator>
-        </view>
-      </scroll-view>
-    </view>
-    <view class="scroll_view_main">
-      <view class="scroll_view_top">
-        <text>最新公告</text>
-      </view>
-      <scroll-view scroll-y class="scroll_view">
-        <view class="news_tabs-view" wx:for="{{newTabs}}" wx:key="{{index}}">
-          <block>
-            <view>{{item.title}}</view>
-            <view class="news_tabs_view_date">{{item.date}}</view>
-          </block>
-        </view>
-      </scroll-view>
-    </view>
+    <newsScrollView :newTabs.sync="newTabs" :hideBottom.sync="hideBottom" :refreshTime.sync="refreshTime" :allPages.sync="allPages"
+      :currentPage.sync="currentPage" :loadMoreData.sync="loadMoreData" :newsType.sync="newsType" :newsTitle.sync="newsTitle"></newsScrollView>
+    <bulletinScrollView :newTabs.sync="newTabsBull" :hideBottom.sync="hideBottomBull" :refreshTime.sync="refreshTimeBull" :allPages.sync="allPagesBull"
+      :currentPage.sync="currentPageBull" :loadMoreData.sync="loadMoreDataBull" :newsType.sync="newsTypeBull" :newsTitle.sync="newsTitleBull"></bulletinScrollView>
+    <view class="bottom_title">{{bottomTitle}}</view>
   </view>
 </template>
 
@@ -48,46 +26,53 @@
   import Swiper from '@/components/Swiper/Swiper'
   import Navmain from '@/components/Navigation/Navmain'
   import Popup from '@/components/Popup/index'
+  import newsScrollView from '@/components/newsScrollView/index'
+  import {
+    selectOne,
+    querySmallApp,
+    queryAppNews
+  } from '../../api/api.js'
+  import * as util from '../../lib/util.js'
   export default class Index extends wepy.page {
     config = {
-      navigationBarTitleText: '西京小勤'
+      navigationBarTitleText: ''
     }
     components = {
       Swiper: Swiper,
       Navmain: Navmain,
       PopupNavmain: Navmain,
-      Popup: Popup
+      Popup: Popup,
+      newsScrollView: newsScrollView,
+      bulletinScrollView: newsScrollView
     }
 
     data = {
+      newsType: 1,
+      newsTitle: '新闻列表',
+      hideBottom: true,
+      refreshTime: '',
+      newTabs: [],
+      allPages: '',
+      currentPage: 1,
+      loadMoreData: '加载更多……',
+      newsTypeBull: 2,
+      newsTitleBull: '公告列表',
+      hideBottomBull: true,
+      refreshTimeBull: '',
+      newTabsBull: [],
+      allPagesBull: '',
+      currentPageBull: 1,
+      loadMoreDataBull: '加载更多……',
+
       getImgUrls: [],
       getNavList: [],
+      getNavWidth: '',
       getMoreNavList: [],
       getShowDialog: false,
-      newTabs: [{
-        title: '我校入选教育部“互联网+中国制造2025”产教融合促进计划试点院校',
-        url: 'http://www.baidu.com',
-        date: '2018-05-16'
-      }, {
-        title: '我校入选教育部“互联网+中国制造2025”产教融合促进计划试点院校',
-        url: 'https://mp.weixin.qq.com/s/ON95CZ3ia6mom_uHBwUmYQ',
-        date: '2018-05-16'
-      }, {
-        title: '我校入选教育部“互联网+中国制造2025”产教融合促进计划试点院校',
-        date: '2018-05-16'
-      }, {
-        title: '我校入选教育部“互联网+中国制造2025”产教融合促进计划试点院校',
-        date: '2018-05-16'
-      }, {
-        title: '我校入选教育部“互联网+中国制造2025”产教融合促进计划试点院校',
-        date: '2018-05-16'
-      }, {
-        title: '我校入选教育部“互联网+中国制造2025”产教融合促进计划试点院校',
-        date: '2018-05-16'
-      }]
+      bottomTitle: ''
     }
     watch = {
-      getShowDialog (newValue, oldValue) {
+      getShowDialog(newValue, oldValue) {
 
       }
     }
@@ -98,72 +83,129 @@
     methods = {
 
     }
+    async getSwiperList() {
+      let getExtConfig = await wepy.getExtConfig()
+      let para = {
+        mid: getExtConfig.extConfig.businessInfo.mid,
+        appid: getExtConfig.extConfig.businessInfo.appid
+      }
+      await selectOne(para).then(res => {
+        if (res.status === 200) {
+          let num = 3
+          this.getNavWidth = `${parseInt(100 / num)}%`
+          this.getImgUrls = res.data.infoList
+          this.bottomTitle = res.data.appname
+          wepy.setNavigationBarTitle({
+            title: res.data.appname
+          })
+          this.$apply()
+        }
+      })
+    }
+    async getNavListFuntion() {
+      let getExtConfig = await wepy.getExtConfig()
+      let para = {
+        mid: getExtConfig.extConfig.businessInfo.mid,
+        page: 1,
+        numPerPage: 20
+      }
+      await querySmallApp(para).then(res => {
+        if (res.status === 200) {
+          this.getNavList = res.data.miniMenuList
+          this.$apply()
+        }
+      })
+    }
+    async getData(type) {
+      let getExtConfig = await wepy.getExtConfig()
+      let para = {
+        mid: getExtConfig.extConfig.businessInfo.mid,
+        title_type: type,
+        numPerPage: '10',
+        page: this.currentPage
+      }
+      queryAppNews(para).then(res => {
+        if (type === 1) {
+          let tempArray = this.newTabs
+          tempArray = tempArray.concat(res.data.miniNewsList)
+          this.allPages = parseInt(res.data.totalCount)
+          for (let i = 0; i < tempArray.length; i++) {
+            let element = tempArray[i].gmt_create
+            tempArray[i].gmt_create = util.formatDate.format(new Date(element), 'yyyy-MM-dd')
+          }
+          this.newTabs = tempArray
+          this.hideBottom = true
+          this.$apply()
+        } else {
+          let tempArray = this.newTabsBull
+          tempArray = tempArray.concat(res.data.miniNewsList)
+          this.allPagesBull = parseInt(res.data.totalCount)
+          for (let i = 0; i < tempArray.length; i++) {
+            let element = tempArray[i].gmt_create
+            tempArray[i].gmt_create = util.formatDate.format(new Date(element), 'yyyy-MM-dd')
+          }
+          this.newTabsBull = tempArray
+          this.hideBottomBull = true
+          this.$apply()
+        }
+      })
+    }
     events = {
       'event-navmain': (navUrl) => {
-        // if (navUrl === 'more') {
-        //   this.getShowDialog = true
-        //   console.log(`弹框出来了...${this.getShowDialog}`)
-        // }
+        console.log(navUrl)
+        if (navUrl === 'more') {
+          this.getShowDialog = true
+          console.log(`弹框出来了...${this.getShowDialog}`)
+        } else {
+          wepy.navigateTo({
+            url: 'webview?url=' + navUrl
+          })
+        }
+      },
+      'event-getData': (type) => {
+        var self = this
+        // 当前页是最后一页
+        if (type === 1) {
+          if (this.newTabs.length === self.allPages) {
+            self.hideBottom = false
+            self.loadMoreData = '没有更多了'
+            return
+          }
+          let tempCurrentPage = self.currentPage
+          tempCurrentPage = tempCurrentPage + 1
+          self.currentPage = tempCurrentPage
+          self.hideBottom = false
+        } else {
+          if (self.newTabsBull.length === self.allPagesBull) {
+            self.hideBottomBull = false
+            self.loadMoreDataBull = '没有更多了'
+            return
+          }
+          let tempCurrentPage = self.currentPageBull
+          tempCurrentPage = tempCurrentPage + 1
+          self.currentPageBull = tempCurrentPage
+          self.hideBottomBull = false
+        }
+        self.getData(type)
+        self.$apply()
       }
     }
+    async onReady() {
+      this.getSwiperList()
+      this.getNavListFuntion()
+    }
+    onPullDownRefresh() {
+      this.getSwiperList()
+      this.getNavListFuntion()
+      this.getData(1)
+      this.getData(2)
+      wepy.stopPullDownRefresh()
+    }
     onLoad() {
-      this.getImgUrls = [
-        'http://img02.tooopen.com/images/20150928/tooopen_sy_143912755726.jpg',
-        'http://img06.tooopen.com/images/20160818/tooopen_sy_175866434296.jpg',
-        'http://img06.tooopen.com/images/20160818/tooopen_sy_175833047715.jpg'
-      ]
-      this.getNavList = [{
-        name: '服务中心',
-        url: 'https://dev.weupay.com/pay/web/shop.html',
-        icon: 'http://iph.href.lu/200x200?text=icon',
-        code: '10'
-      }, {
-        name: 'Java',
-        url: 'https://www.baidu.com',
-        icon: 'http://iph.href.lu/200x200?text=icon',
-        code: '11'
-      }, {
-        name: 'Java',
-        url: 'https://www.baidu.com',
-        icon: 'http://iph.href.lu/200x200?text=icon',
-        code: '11'
-      }, {
-        name: 'Java',
-        url: 'https://www.baidu.com',
-        icon: 'http://iph.href.lu/200x200?text=icon',
-        code: '11'
-      }, {
-        name: 'Java',
-        url: 'https://www.baidu.com',
-        icon: 'http://iph.href.lu/200x200?text=icon',
-        code: '11'
-      }, {
-        name: 'Java',
-        url: 'https://www.baidu.com',
-        icon: 'http://iph.href.lu/200x200?text=icon',
-        code: '11'
-      }, {
-        name: 'Java',
-        url: 'https://www.baidu.com',
-        icon: 'http://iph.href.lu/200x200?text=icon',
-        code: '11'
-      }, {
-        name: 'Java',
-        url: 'https://www.baidu.com',
-        icon: 'http://iph.href.lu/200x200?text=icon',
-        code: '11'
-      }, {
-        name: '更多',
-        url: 'more',
-        icon: 'http://iph.href.lu/200x200?text=icon',
-        code: '11'
-      }]
-      this.getMoreNavList = [{
-        name: 'HTML',
-        url: '/pages/Course/course',
-        icon: 'http://iph.href.lu/200x200?text=icon',
-        code: '10'
-      }]
+      var date = new Date()
+      this.refreshTime = date.toLocaleTimeString()
+      this.getData(1)
+      this.getData(2)
     }
   }
 

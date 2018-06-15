@@ -5,15 +5,15 @@
 <template>
   <view class="container">
     <view class="weui-grids">
-      <view class="weui-grid" wx:for="{{navList}}" wx:key="name">
-        <navigator url="webview?url={{item.url}}" @tap="tapNavigator" @longpress="longpressNavigator">
-          <view class='weui-grid__bg'>
+      <view class="weui-grid" wx:for="{{navList}}" wx:key="name" style="width:{{navWidth}}">
+        <!-- <navigator url="webview?url={{item.url}}"> -->
+          <view class='weui-grid__bg' @tap="tapNavigator({{item.forward_url}})" @longpress="longpressNavigator">
             <view class="weui-grid__icon">
-              <image src=" {{item.icon}}" mode="scaleToFill" />
+              <image src=" {{item.menu_ico}}" mode="scaleToFill" />
             </view>
-            <text class="weui-grid__label">{{item.name}}</text>
+            <text class="weui-grid__label">{{item.menu_url}}</text>
           </view>
-        </navigator>
+        <!-- </navigator> -->
       </view>
     </view>
   </view>
@@ -25,6 +25,10 @@
       navList: {
         type: [Array],
         default: []
+      },
+      navWidth: {
+        type: [String],
+        default: '25%'
       }
     }
     data = {

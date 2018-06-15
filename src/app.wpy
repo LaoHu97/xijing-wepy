@@ -11,7 +11,8 @@ export default class extends wepy.app {
     pages: [
       'pages/menu/index',
       'pages/index/index',
-      'pages/menu/webview'
+      'pages/menu/webview',
+      'pages/menu/newsview'
     ],
     window: {
       backgroundTextStyle: 'dark',
@@ -86,7 +87,7 @@ export default class extends wepy.app {
     this.use('promisify')
   }
 
-  onLaunch() {
+  onLaunch(options) {
     this.testAsync()
   }
 
