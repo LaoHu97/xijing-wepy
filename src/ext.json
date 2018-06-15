@@ -1,0 +1,15 @@
+{
+  "extEnable": true,
+  "extAppid": "wx32a0348172f66270",
+  "directCommit": false,
+  "ext": {
+    "name": "wechat",
+    "businessInfo":{
+      "mid":"200",
+      "appid":"wx32a0348172f66270"
+    },
+    "attr": {
+      "host": "http://dev.weupay.com"
+    }
+  }
+}

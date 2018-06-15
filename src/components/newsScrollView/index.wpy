@@ -1,0 +1,86 @@
+<style lang="less">
+  @import "./index.less";
+
+</style>
+<template>
+  <view class="scroll_view_main">
+    <view class="scroll_view_top">
+      <text>{{newsTitle}}</text>
+    </view>
+    <scroll-view scroll-y bindscrolltolower="loadMore" class="scroll_view">
+      <view class="news_tabs-view" wx:for="{{newTabs}}" wx:key="{{index}}"  @tap="tapNewsScrollView({{item}})">
+        <block>
+          <view>{{item.title}}</view>
+          <view class="news_tabs_view_date">{{item.gmt_create}}</view>
+        </block>
+      </view>
+      <view class="scroll_view_bottom" hidden="{{hideBottom}}">
+        <view>{{loadMoreData}}</view>
+        <view>{{refreshTime}}</view>
+      </view>
+    </scroll-view>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy'
+  export default class newsScrollView extends wepy.component {
+    props = {
+      newTabs: {
+        type: [Array],
+        default: []
+      },
+      hideBottom: {
+        type: [Boolean],
+        default: true
+      },
+      refreshTime: {
+        type: [String],
+        default: ''
+      },
+      allPages: {
+        type: [String],
+        default: ''
+      },
+      currentPage: {
+        type: [Number],
+        default: 1
+      },
+      loadMoreData: {
+        type: [String],
+        default: '加载更多……'
+      },
+      newsType: {
+        type: [Number],
+        default: ''
+      },
+      newsTitle: {
+        type: [String],
+        default: ''
+      }
+    }
+    data = {
+
+    }
+    methods = {
+      loadMore() {
+        this.$emit('event-getData', this.newsType)
+      },
+      tapNewsScrollView(item) {
+        console.log(item)
+        if (item.title_url) {
+          wepy.navigateTo({
+            url: 'webview?url=' + item.title_url
+          })
+        } else {
+          wepy.navigateTo({
+            url: 'newsview?id=' + item.id
+          })
+        }
+      }
+    }
+    onLoad(options) {
+
+    }
+  }
+
+</script>
