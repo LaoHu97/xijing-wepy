@@ -2,7 +2,6 @@
   @import "./less/config";
 
 </style>
-
 <script>
   import wepy from 'wepy'
   import 'wepy-async-function'
@@ -36,7 +35,8 @@
         }],
         color: '#7f8389',
         selectedColor: '#3366cc'
-      }
+      },
+      debug: true
     }
 
     globalData = {
@@ -49,12 +49,7 @@
       this.intercept('request', {
         // 发出请求时的回调函数
         config(p) {
-          // 增加请求时Loading
-          wepy.showLoading({
-            title: '加载中',
-            mask: true
-          })
-          // console.log('请求头: ', p)
+          console.log('请求头: ', p)
           // 必须返回OBJECT参数对象，否则无法发送请求到服务端
           return p
         },
@@ -88,7 +83,6 @@
 
         // 请求完成时的回调函数(请求成功或失败都会被执行)
         complete(p) {
-          wepy.hideLoading()
           console.log('请求完成: ', p)
         }
       })

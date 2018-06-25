@@ -79,29 +79,33 @@
       }
     }
     getData(type) {
-      let getExtConfig = wepy.getExtConfigSync ? wepy.getExtConfigSync() : {}
-      let para = {
-        mid: getExtConfig.businessInfo.mid,
-        title_type: type,
-        numPerPage: '10',
-        page: this.currentPage
-      }
-      queryAppNews(para).then(res => {
-        let tempArray = this.newTabs
-        tempArray = tempArray.concat(res.data.miniNewsList)
-        this.allPages = res.data.totalCount
-        for (let i = 0; i < tempArray.length; i++) {
-          let element = tempArray[i].gmt_create
-          tempArray[i].gmt_create = util.formatDate.format(new Date(element), 'yyyy-MM-dd')
+      return new Promise((resolve, reject) => {
+        let getExtConfig = wepy.getExtConfigSync ? wepy.getExtConfigSync() : {}
+        let para = {
+          mid: getExtConfig.businessInfo.mid,
+          appid: getExtConfig.businessInfo.appid,
+          title_type: type,
+          numPerPage: '10',
+          page: this.currentPage
         }
-        this.newTabs = tempArray
-        if (this.allPages === this.newTabs.length) {
-          this.hideBottom = false
-          this.loadMoreData = '没有更多了'
-        } else {
-          this.hideBottom = true
-        }
-        this.$apply()
+        queryAppNews(para).then(res => {
+          let tempArray = this.newTabs
+          tempArray = tempArray.concat(res.data.miniNewsList)
+          this.allPages = res.data.totalCount
+          for (let i = 0; i < tempArray.length; i++) {
+            let element = tempArray[i].gmt_create
+            tempArray[i].gmt_create = util.formatDate.format(new Date(element), 'yyyy-MM-dd')
+          }
+          this.newTabs = tempArray
+          if (this.allPages === this.newTabs.length) {
+            this.hideBottom = false
+            this.loadMoreData = '没有更多了'
+          } else {
+            this.hideBottom = true
+          }
+          resolve('promise resolved')
+          this.$apply()
+        })
       })
     }
     async startTop() {
@@ -119,11 +123,11 @@
       self.getData(this.newsType)
       self.$apply()
     }
-    onPullDownRefresh() {
+    async onPullDownRefresh() {
       console.log('我被拉到顶了')
       this.newTabs = []
       this.currentPage = 1
-      this.getData(this.newsType)
+      await this.getData(this.newsType)
       wepy.stopPullDownRefresh()
       setTimeout(() => {
         wepy.showToast({
@@ -131,7 +135,7 @@
           icon: 'success',
           duration: 2000
         })
-      }, 500)
+      }, 800)
     }
     onReachBottom() {
       console.log('我被拉到底了')

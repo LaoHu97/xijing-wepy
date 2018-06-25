@@ -1,6 +1,5 @@
 <style lang="less">
   @import './index.less';
-
 </style>
 <template>
   <view>
@@ -43,51 +42,55 @@
       getNavWidth: '',
       getMoreNavList: [],
       getShowDialog: false,
-      bottomTitle: ''
+      bottomTitle: '',
+      ShareAppMessage: ''
     }
     watch = {
       getShowDialog(newValue, oldValue) {
 
       }
     }
-    computed = {
-
-    }
-
-    methods = {
-
-    }
     getSwiperList() {
-      let getExtConfig = wepy.getExtConfigSync ? wepy.getExtConfigSync() : {}
-      let para = {
-        mid: getExtConfig.businessInfo.mid,
-        appid: getExtConfig.businessInfo.appid
-      }
-      selectOne(para).then(res => {
-        if (res.status === 200) {
-          let num = 4
-          this.getNavWidth = `${parseInt(100 / num)}%`
-          this.getImgUrls = res.data.infoList
-          this.bottomTitle = res.data.appname
-          wepy.setNavigationBarTitle({
-            title: res.data.appname
-          })
-          this.$apply()
+      return new Promise((resolve, reject) => {
+        let getExtConfig = wepy.getExtConfigSync ? wepy.getExtConfigSync() : {}
+        let para = {
+          mid: getExtConfig.businessInfo.mid,
+          appid: getExtConfig.businessInfo.appid
         }
+        selectOne(para).then(res => {
+          if (res.status === 200) {
+            let num = 4
+            this.getNavWidth = `${parseInt(100 / num)}%`
+            this.getImgUrls = res.data.infoList
+            this.bottomTitle = res.data.appname
+            wepy.setNavigationBarTitle({
+              title: res.data.appname
+            })
+            console.log('轮播图获取到了')
+            resolve('promise resolved')
+            this.$apply()
+          }
+        })
       })
     }
     getNavListFuntion() {
-      let getExtConfig = wepy.getExtConfigSync ? wepy.getExtConfigSync() : {}
-      let para = {
-        mid: getExtConfig.businessInfo.mid,
-        page: 1,
-        numPerPage: 20
-      }
-      querySmallApp(para).then(res => {
-        if (res.status === 200) {
-          this.getNavList = res.data.miniMenuList
-          this.$apply()
+      return new Promise((resolve, reject) => {
+        let getExtConfig = wepy.getExtConfigSync ? wepy.getExtConfigSync() : {}
+        let para = {
+          mid: getExtConfig.businessInfo.mid,
+          appid: getExtConfig.businessInfo.appid,
+          page: 1,
+          numPerPage: 20,
+          menu_type: 1
         }
+        querySmallApp(para).then(res => {
+          if (res.status === 200) {
+            this.getNavList = res.data.miniMenuList
+            console.log('导航获取到了')
+            resolve('promise resolved')
+            this.$apply()
+          }
+        })
       })
     }
     events = {
@@ -106,9 +109,9 @@
       this.getSwiperList()
       this.getNavListFuntion()
     }
-    onPullDownRefresh() {
-      this.getSwiperList()
-      this.getNavListFuntion()
+    async onPullDownRefresh() {
+      await this.getSwiperList()
+      await this.getNavListFuntion()
       wepy.stopPullDownRefresh()
       setTimeout(() => {
         wepy.showToast({
@@ -116,15 +119,12 @@
           icon: 'success',
           duration: 2000
         })
-      }, 500)
+      }, 800)
     }
-    onShareAppMessage (res) {
+    onShareAppMessage(res) {
       return {
-        title: '西京小勤'
+        title: this.bottomTitle
       }
-    }
-    onLoad() {
-
     }
   }
 
