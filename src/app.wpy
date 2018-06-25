@@ -58,7 +58,7 @@
         success(p) {
           // 可以在这里对收到的响应数据对象进行加工处理
           console.log('请求成功: ', p)
-          if (p.statusCode !== 200) {
+          if (p.statusCode !== 200 || p.data.status !== 200) {
             wepy.showToast({
               title: '服务器错误，请稍候再试',
               icon: 'none',
