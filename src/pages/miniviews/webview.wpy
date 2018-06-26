@@ -8,10 +8,18 @@
   import wepy from 'wepy'
   export default class webview extends wepy.page {
     data = {
-      weburl: ''
+      weburl: '',
+      bottomTitle: ''
     }
     onLoad(option) {
       this.weburl = option.url
+      this.bottomTitle = option.title
+    }
+    onShareAppMessage(res) {
+      return {
+        title: this.bottomTitle,
+        path: `/pages/miniviews/webview?url=${this.weburl}&title=${this.bottomTitle}`
+      }
     }
   }
 

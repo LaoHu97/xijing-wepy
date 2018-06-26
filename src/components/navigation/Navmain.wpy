@@ -7,7 +7,7 @@
     <view class="weui-grids">
       <view class="weui-grid" wx:for="{{navList}}" wx:key="name" style="width:{{navWidth}}">
         <!-- <navigator url="webview?url={{item.url}}"> -->
-          <view class='weui-grid__bg' @tap="tapNavigator({{item.forward_url}})" @longpress="longpressNavigator">
+          <view class='weui-grid__bg' @tap="tapNavigator({{item}})" @longpress="longpressNavigator">
             <view class="weui-grid__icon">
               <image src=" {{item.menu_ico}}" mode="scaleToFill" />
             </view>
@@ -35,8 +35,8 @@
 
     }
     methods = {
-      tapNavigator(navUrl, e) {
-        this.$emit('event-navmain', navUrl)
+      tapNavigator(item, e) {
+        this.$emit('event-navmain', item)
       },
       longpressNavigator() {
         console.log('长按时间超过350ms了')
