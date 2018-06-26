@@ -1,6 +1,7 @@
 import wepy from 'wepy'
-const extConfig = wepy.getExtConfigSync ? wepy.getExtConfigSync() : {}
-let preUrlPath = extConfig.attr.host
+import * as config from '../lib/config.js'
+
+let preUrlPath = config.ext.host
 
 export const selectOne = params => { return wepy.request({url: `${preUrlPath}/admin/api/mini/1/selectOne`, data: params, method: 'POST'}).then(res => res.data) }
 

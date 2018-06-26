@@ -21,6 +21,7 @@
   import Swiper from '@/components/Swiper/Swiper'
   import Navmain from '@/components/Navigation/Navmain'
   import Popup from '@/components/Popup/index'
+  import * as config from '../../lib/config.js'
   import {
     selectOne,
     querySmallApp
@@ -52,10 +53,10 @@
     }
     getSwiperList() {
       return new Promise((resolve, reject) => {
-        let getExtConfig = wepy.getExtConfigSync ? wepy.getExtConfigSync() : {}
+        // let getExtConfig = wepy.getExtConfigSync ? wepy.getExtConfigSync() : {}
         let para = {
-          mid: getExtConfig.businessInfo.mid,
-          appid: getExtConfig.businessInfo.appid
+          mid: config.ext.mid,
+          appid: config.ext.appid
         }
         selectOne(para).then(res => {
           if (res.status === 200) {
@@ -75,10 +76,10 @@
     }
     getNavListFuntion() {
       return new Promise((resolve, reject) => {
-        let getExtConfig = wepy.getExtConfigSync ? wepy.getExtConfigSync() : {}
+        // let getExtConfig = wepy.getExtConfigSync ? wepy.getExtConfigSync() : {}
         let para = {
-          mid: getExtConfig.businessInfo.mid,
-          appid: getExtConfig.businessInfo.appid,
+          mid: config.ext.mid,
+          appid: config.ext.appid,
           page: 1,
           numPerPage: 20,
           menu_type: 1

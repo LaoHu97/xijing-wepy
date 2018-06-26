@@ -37,6 +37,7 @@
   import wepy from 'wepy'
   import newsScrollView from '@/components/newsScrollView/index'
   import * as util from '../../lib/util.js'
+  import * as config from '../../lib/config.js'
   import {
     queryAppNews
   } from '../../api/api.js'
@@ -80,10 +81,10 @@
     }
     getData(type) {
       return new Promise((resolve, reject) => {
-        let getExtConfig = wepy.getExtConfigSync ? wepy.getExtConfigSync() : {}
+        // let getExtConfig = wepy.getExtConfigSync ? wepy.getExtConfigSync() : {}
         let para = {
-          mid: getExtConfig.businessInfo.mid,
-          appid: getExtConfig.businessInfo.appid,
+          mid: config.ext.mid,
+          appid: config.ext.appid,
           title_type: type,
           numPerPage: '10',
           page: this.currentPage
