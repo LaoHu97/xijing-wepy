@@ -1,5 +1,5 @@
 export const ext = {
-  mid: '200',
-  appid: 'wx32a0348172f66270',
-  host: 'https://dev.weupay.com'
+  mid: '845',
+  appid: 'wxe8fbfe56d88ee0ad',
+  host: 'https://weixin.weupay.com'
 }

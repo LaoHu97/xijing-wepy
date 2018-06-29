@@ -44,7 +44,7 @@
           })
         } else {
           wepy.showToast({
-            title: '请添加链接地址',
+            title: '暂无链接地址',
             icon: 'none',
             duration: 2000
           })
