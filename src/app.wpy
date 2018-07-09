@@ -10,6 +10,8 @@
     config = {
       pages: [
         'pages/menu/index',
+        'pages/map/index',
+        'pages/map/search',
         'pages/miniviews/webview',
         'pages/miniviews/newsview'
       ],

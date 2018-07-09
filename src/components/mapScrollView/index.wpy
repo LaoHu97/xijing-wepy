@@ -1,0 +1,74 @@
+<style scoped lang="less">
+  @import "./index.less";
+
+</style>
+<template>
+  <view class="scroll_view_main">
+    <view class="mapList_top" @tap="mapListTop">
+      共有{{mapListLength}}个
+      <image class="mapList_top_ico" src="{{scrollView ? '../../assets/icons/jiantou_top.png' : '../../assets/icons/jiantou_bot.png'}}" />
+    </view>
+    <scroll-view scroll-y scroll-into-view="list-{{id}}" style="height: {{height}}" wx:if="{{scrollView}}">
+      <view class="maps_tabs_view" wx:for="{{mapList}}" id="list-{{index}}" style="background:{{index === id ? '#EBEEF5' : '#fff'}};color:{{index === id ? '#d81e06' : '#333'}};" wx:key="{{index}}" @tap="tapMapsScrollView({{item}})">
+        <block>
+          <image class="map_img" mode="aspectFill" src="{{item.image}}" />
+        </block>
+        <block>
+          <view class="title_text">{{item.content}}</view>
+        </block>
+        <block>
+          <image class="map_ico" src="../../assets/icons/jiantou.png" />
+        </block>
+      </view>
+    </scroll-view>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy'
+  export default class mapScrollView extends wepy.component {
+    props = {
+      id: {
+        type: [String],
+        default: ''
+      },
+      mapList: {
+        type: [Array],
+        default: []
+      },
+      mapListLength: {
+        type: [Number],
+        default: 0
+      }
+    }
+    data = {
+      height: '',
+      mapListLength: 0,
+      scrollView: true
+    }
+    methods = {
+      tapMapsScrollView (item) {
+        wepy.openLocation({
+          latitude: Number(item.latitude),
+          longitude: Number(item.longitude),
+          scale: 18,
+          name: item.content
+        })
+      },
+      mapListTop () {
+        this.scrollView = !this.scrollView
+        this.$emit('event-scroll-view', this.scrollView)
+      }
+    }
+    events = {
+      'some-event-scroll-view': (val) => {
+        this.scrollView = true
+        this.$emit('event-scroll-view', this.scrollView)
+      }
+    }
+    async onLoad() {
+      let getSystemInfo = await wepy.getSystemInfo()
+      this.height = `${getSystemInfo.windowHeight - 335}px`
+    }
+  }
+
+</script>

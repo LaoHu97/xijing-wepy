@@ -1,0 +1,152 @@
+<template>
+  <view>
+    <map id="map" longitude="{{longitude}}" latitude="{{latitude}}" scale="15" show-location markers="{{markers}}" bindmarkertap="markertap"
+      style="width: 100%; height: {{mapHeight}}px;">
+      <cover-view class="map_controls">
+        <cover-view class="map_img" @tap="clickMapImg">
+          <cover-image class="img" src="../../assets/icons/location.png" />
+        </cover-view>
+        <cover-view class="map_xian">
+        </cover-view>
+        <cover-view class="map_search" @tap="clickSearch">
+          <cover-image class="img" src="../../assets/icons/search.png" />
+        </cover-view>
+      </cover-view>
+    </map>
+    <mapScrollView :mapList.sync="mapList" :id.sync="mapListId" :mapListLength.sync="mapListLength"></mapScrollView>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy'
+  import mapScrollView from '@/components/mapScrollView/index'
+  import * as config from '../../lib/config.js'
+  import {
+    queryMiniNavig
+  } from '../../api/api.js'
+  export default class Index extends wepy.page {
+    components = {
+      mapScrollView: mapScrollView
+    }
+    config = {
+      navigationBarTitleText: '导览服务'
+    }
+    data = {
+      getSystemInfo: null,
+      mapListLength: '',
+      mapListId: '',
+      mapList: [],
+      mapHeight: '300',
+      longitude: 108.9295291901,
+      latitude: 34.1329431776,
+      markers: []
+    }
+    methods = {
+      async clickMapImg () {
+        await wepy.getLocation({type: 'gcj02'}).then(res => {
+          this.latitude = res.latitude
+          this.longitude = res.longitude
+          this.$apply()
+        }).catch(err => {
+          console.log(err)
+          wepy.getSetting().then(res => {
+            wepy.showModal({title: '提示', content: '系统检测到您没有打开定位，无法正常使用，是否现在打开设置？'}).then(res => {
+              if (res.confirm) {
+                wepy.openSetting()
+              }
+            })
+          })
+        })
+      },
+      clickSearch () {
+        wepy.navigateTo({
+          url: `/pages/map/search`
+        })
+      },
+      markertap(e) {
+        this.mapListId = e.markerId
+        this.$broadcast('some-event-scroll-view', true)
+        this.mapHeight = 300
+        console.log(e)
+        let element = this.mapList[e.markerId]
+        let others1 = '../../assets/icons/others1.png'
+        let others = '../../assets/icons/others.png'
+        for (let index = 0; index < this.mapList.length; index++) {
+          this.mapList[index].iconPath = others
+        }
+        element.iconPath = others1
+        this.$apply()
+      }
+    }
+    getMapList () {
+      let para = {
+        mid: config.ext.mid,
+        appid: config.ext.appid
+      }
+      queryMiniNavig(para).then(res => {
+        let mapList = res.data.miniNavigList
+        let newMapList = []
+        for (let i = 0; i < mapList.length; i++) {
+          const element = mapList[i]
+          element.iconPath = '../../assets/icons/others.png'
+          element.width = 35
+          element.height = 35
+          element.id = i
+          newMapList.push(element)
+        }
+        console.log(newMapList)
+        this.markers = newMapList
+        this.mapList = newMapList
+        this.mapListLength = newMapList.length
+        this.$apply()
+      })
+    }
+    events = {
+      'event-scroll-view': (val) => {
+        if (val) {
+          this.mapHeight = 300
+        } else {
+          this.mapHeight = this.getSystemInfo.windowHeight - 36
+        }
+      }
+    }
+    async onPullDownRefresh() {
+      await this.getMapList()
+      wepy.stopPullDownRefresh()
+      setTimeout(() => {
+        wepy.showToast({
+          title: '刷新成功',
+          icon: 'success',
+          duration: 2000
+        })
+      }, 800)
+    }
+    async onLoad() {
+      this.getSystemInfo = await wepy.getSystemInfo()
+    }
+    onReady() {
+      this.getMapList()
+    }
+  }
+
+</script>
+<style scoped>
+.map_controls{
+  background: #fff;
+  border: 1px solid #DCDFE6;
+  border-radius: 3px;
+  position: absolute;
+  right: 10rpx;
+  bottom: 10rpx;
+}
+.map_img .img,.map_search .img{
+  width: 40rpx;
+  height: 40rpx;
+  padding: 15rpx 10rpx;
+}
+.map_xian{
+  height: 1px;
+  width: 70%;
+  margin: 0 auto;
+  background: #DCDFE6;
+}
+</style>

@@ -163,6 +163,11 @@
         if (item.forward_url === 'more') {
           this.getShowDialog = true
           console.log(`弹框出来了...${this.getShowDialog}`)
+        } else if (item.forward_url === 'http://map.com') {
+          wepy.navigateTo({
+            url: `/pages/map/index`
+          })
+          console.log('我要去地图导航了')
         } else {
           wepy.navigateTo({
             url: `/pages/miniviews/webview?url=${item.forward_url}`

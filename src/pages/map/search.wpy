@@ -1,0 +1,162 @@
+<template>
+  <view class="search_main">
+    <view class="search">
+      <view class="search_input">
+        <icon type="search" size="16"/>
+        <input placeholder="请输入位置名称关键字" @input="searchInput" @confirm="getMapList" maxlength="10" value="{{search_input_value}}" placeholder-style="font-size: 24rpx;" confirm-type="search" auto-focus/>
+        <icon type="clear" wx:if="{{search_input_value!=''}}" @tap="delText" class="search_del" size="16"/>
+      </view>
+      <button size="mini" class="search_button" @tap="getMapList" type="primary">搜索</button>
+    </view>
+    <view wx:if="{{searchResult}}">
+      <view class="maps_tabs_view" wx:for="{{mapList}}" wx:key="{{index}}" @tap="tapMapsScrollView({{item}})">
+        <block>
+          <image class="map_img" mode="aspectFill" src="{{item.image}}" />
+        </block>
+        <block>
+          <view class="title_text">{{item.content}}</view>
+        </block>
+        <block>
+          <image class="map_ico" src="../../assets/icons/jiantou.png" />
+        </block>
+      </view>
+    </view>
+    <view class="search_result" wx:else>
+      <view>
+        <icon type="search" size="80"/>
+      </view>
+        <text>没有搜索到相关地点</text>
+    </view>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy'
+  import * as config from '../../lib/config.js'
+  import mapScrollView from '@/components/mapScrollView/index'
+  import {
+    queryMiniNavig
+  } from '../../api/api.js'
+  export default class Index extends wepy.page {
+    components = {
+      mapScrollView: mapScrollView
+    }
+    config = {
+      navigationBarTitleText: '搜索服务',
+      enablePullDownRefresh: false
+    }
+    data = {
+      search_input_value: '',
+      mapList: [],
+      searchResult: true
+    }
+    methods = {
+      tapMapsScrollView (item) {
+        wepy.openLocation({
+          latitude: Number(item.latitude),
+          longitude: Number(item.longitude),
+          scale: 18,
+          name: item.content
+        })
+      },
+      searchInput (e) {
+        this.search_input_value = e.detail.value
+        this.$apply()
+      },
+      delText() {
+        this.search_input_value = ''
+        this.$apply()
+      },
+      getMapList (e) {
+        let para = {
+          content: this.search_input_value,
+          mid: config.ext.mid,
+          appid: config.ext.appid
+        }
+        queryMiniNavig(para).then(res => {
+          this.mapList = res.data.miniNavigList
+          if (res.data.miniNavigList.length) {
+            this.searchResult = true
+          } else {
+            this.searchResult = false
+          }
+          this.$apply()
+        })
+      }
+    }
+  }
+</script>
+<style scoped>
+.search_main{
+  height: 100%;
+  background: #fff;
+}
+.search{
+  padding: 10rpx 0;
+  display: flex;
+}
+.search_input{
+  width: 480rpx;
+  margin: 10rpx auto;
+  display: flex;
+  background: #efeff4;
+  border-radius: 300rpx;
+  align-items: center;
+  padding: 0 12rpx;
+}
+.search_input input{
+  width: 80%;
+  height: 60rpx;
+  font-size: 28rpx;
+  padding-left:15rpx;
+  line-height: 60rpx;
+}
+.search_button{
+  height: 60rpx;
+  margin-top: 10rpx;
+}
+.maps_tabs_view{
+  height: 120rpx;
+  border-bottom: 1px solid #efeff4;
+  background: #fff;
+}
+.map_img{
+  width: 130rpx; 
+  height: 100rpx; 
+  background-color: #eeeeee; 
+  float:left;
+  margin:10rpx;
+  border-radius: 10rpx;
+}
+.title_text{
+  line-height: 120rpx;
+  font-size: 32rpx;
+}
+.map_ico{
+  width: 50rpx;
+  height: 50rpx;
+  float: right;
+  margin: 35rpx 20rpx;
+}
+.title_text {
+  margin: 0 10rpx;
+  display: inline;
+}
+.mapList_top{
+  height: 70rpx;
+  border-bottom: 1px solid #efeff4;
+  border-top: 1px solid #efeff4;
+  font-size: 24rpx;
+  line-height: 70rpx;
+  text-align: center;
+}
+.mapList_top_ico{
+  height: 35rpx;
+  width: 35rpx;
+  vertical-align:middle
+}
+.search_result{
+  text-align: center;
+  margin-top: 200rpx;
+  color: darkgray;
+}
+</style>
