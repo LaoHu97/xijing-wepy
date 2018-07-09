@@ -10,7 +10,8 @@
     config = {
       pages: [
         'pages/menu/index',
-        'pages/index/index',
+        'pages/map/index',
+        'pages/map/search',
         'pages/miniviews/webview',
         'pages/miniviews/newsview'
       ],
@@ -21,22 +22,7 @@
         navigationBarTextStyle: 'black',
         enablePullDownRefresh: true
       },
-      tabBar: {
-        list: [{
-          pagePath: 'pages/menu/index',
-          text: '首页',
-          iconPath: './assets/icons/app.png',
-          selectedIconPath: './assets/icons/app (1).png'
-        }, {
-          pagePath: 'pages/index/index',
-          text: '资讯',
-          iconPath: './assets/icons/home.png',
-          selectedIconPath: './assets/icons/home (1).png'
-        }],
-        color: '#7f8389',
-        selectedColor: '#3366cc'
-      },
-      debug: true
+      debug: false
     }
 
     globalData = {

@@ -1,18 +1,21 @@
 <style>
-swiper{
-  height: 360rpx;
-}
-.Swiper,.slide-image{
-  width: 100%;
-  height: 100%;
-}
+  swiper {
+    height: 360rpx;
+  }
+
+  .Swiper,
+  .slide-image {
+    width: 100%;
+    height: 100%;
+  }
+
 </style>
 <template>
   <view class="Swiper">
     <swiper indicator-dots="{{indicatorDots}}" autoplay="{{autoplay}}" interval="{{interval}}" duration="{{duration}}">
       <block wx:for="{{imgUrls}}" wx:key="index">
-        <swiper-item>
-          <image src="{{item.image}}" mode="aspectFill" class="slide-image"/>
+        <swiper-item @tap="clickSwiper({{item}})">
+          <image src="{{item.image}}" mode="aspectFill" class="slide-image" />
         </swiper-item>
       </block>
     </swiper>
@@ -33,5 +36,21 @@ swiper{
       interval: 5000,
       duration: 1000
     }
+    methods = {
+      clickSwiper(item) {
+        if (item.imageUrl) {
+          wepy.navigateTo({
+            url: `/pages/miniviews/webview?url=${item.imageUrl}`
+          })
+        } else {
+          wepy.showToast({
+            title: '暂无链接地址',
+            icon: 'none',
+            duration: 2000
+          })
+        }
+      }
+    }
   }
+
 </script>

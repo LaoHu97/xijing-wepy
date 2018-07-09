@@ -12,7 +12,11 @@
         </view>
       </Popup>
     </view>
-    <view class="bottom_title">{{bottomTitle}}</view>
+    <!-- <view class="bottom_title">{{bottomTitle}}</view> -->
+    <view class="weui-tab__panel">
+      <newsScrollView class="weui-tab__content" :newTabs.sync="newTabs" :hideBottom.sync="hideBottom" :refreshTime.sync="refreshTime"
+        :allPages.sync="allPages" :currentPage.sync="currentPage" :loadMoreData.sync="loadMoreData"></newsScrollView>
+    </view>
   </view>
 </template>
 
@@ -21,9 +25,13 @@
   import Swiper from '@/components/Swiper/Swiper'
   import Navmain from '@/components/Navigation/Navmain'
   import Popup from '@/components/Popup/index'
+  import newsScrollView from '@/components/newsScrollView/index'
+  import * as config from '../../lib/config.js'
+  import * as util from '../../lib/util.js'
   import {
     selectOne,
-    querySmallApp
+    querySmallApp,
+    queryAppNews
   } from '../../api/api.js'
   export default class Index extends wepy.page {
     config = {
@@ -33,7 +41,8 @@
       Swiper: Swiper,
       Navmain: Navmain,
       PopupNavmain: Navmain,
-      Popup: Popup
+      Popup: Popup,
+      newsScrollView: newsScrollView
     }
 
     data = {
@@ -43,7 +52,15 @@
       getMoreNavList: [],
       getShowDialog: false,
       bottomTitle: '',
-      ShareAppMessage: ''
+      ShareAppMessage: '',
+
+      newsType: 1,
+      hideBottom: true,
+      refreshTime: '',
+      newTabs: [],
+      allPages: '',
+      currentPage: 1,
+      loadMoreData: '加载更多……'
     }
     watch = {
       getShowDialog(newValue, oldValue) {
@@ -52,10 +69,10 @@
     }
     getSwiperList() {
       return new Promise((resolve, reject) => {
-        let getExtConfig = wepy.getExtConfigSync ? wepy.getExtConfigSync() : {}
+        // let getExtConfig = wepy.getExtConfigSync ? wepy.getExtConfigSync() : {}
         let para = {
-          mid: getExtConfig.businessInfo.mid,
-          appid: getExtConfig.businessInfo.appid
+          mid: config.ext.mid,
+          appid: config.ext.appid
         }
         selectOne(para).then(res => {
           if (res.status === 200) {
@@ -75,10 +92,10 @@
     }
     getNavListFuntion() {
       return new Promise((resolve, reject) => {
-        let getExtConfig = wepy.getExtConfigSync ? wepy.getExtConfigSync() : {}
+        // let getExtConfig = wepy.getExtConfigSync ? wepy.getExtConfigSync() : {}
         let para = {
-          mid: getExtConfig.businessInfo.mid,
-          appid: getExtConfig.businessInfo.appid,
+          mid: config.ext.mid,
+          appid: config.ext.appid,
           page: 1,
           numPerPage: 20,
           menu_type: 1
@@ -93,25 +110,77 @@
         })
       })
     }
+    getData() {
+      return new Promise((resolve, reject) => {
+        let para = {
+          mid: config.ext.mid,
+          appid: config.ext.appid,
+          numPerPage: '10',
+          page: this.currentPage
+        }
+        queryAppNews(para).then(res => {
+          let tempArray = this.newTabs
+          tempArray = tempArray.concat(res.data.miniNewsList)
+          this.allPages = res.data.totalCount
+          for (let i = 0; i < tempArray.length; i++) {
+            let element = tempArray[i].gmt_create
+            tempArray[i].gmt_create = util.formatDate.format(new Date(element), 'yyyy-MM-dd')
+          }
+          this.newTabs = tempArray
+          if (this.allPages === this.newTabs.length) {
+            this.hideBottom = false
+            this.loadMoreData = '没有更多了'
+          } else {
+            this.hideBottom = true
+          }
+          resolve('promise resolved')
+          this.$apply()
+        })
+      })
+    }
+    async startTop() {
+      var self = this
+      // 当前页是最后一页
+      if (self.newTabs.length === self.allPages) {
+        self.hideBottom = false
+        self.loadMoreData = '没有更多了'
+        return
+      }
+      let tempCurrentPage = self.currentPage
+      tempCurrentPage = tempCurrentPage + 1
+      self.currentPage = tempCurrentPage
+      self.hideBottom = false
+      self.getData()
+      self.$apply()
+    }
+    onReachBottom() {
+      console.log('我被拉到底了')
+      this.startTop()
+    }
     events = {
-      'event-navmain': (navUrl) => {
-        if (navUrl === 'more') {
+      'event-navmain': (item) => {
+        console.log(item)
+        if (item.forward_url === 'more') {
           this.getShowDialog = true
           console.log(`弹框出来了...${this.getShowDialog}`)
+        } else if (item.forward_url === 'http://map.com') {
+          wepy.navigateTo({
+            url: `/pages/map/index`
+          })
+          console.log('我要去地图导航了')
         } else {
           wepy.navigateTo({
-            url: `/pages/miniviews/webview?url=https://${navUrl}`
+            url: `/pages/miniviews/webview?url=${item.forward_url}`
           })
         }
       }
     }
-    onReady() {
-      this.getSwiperList()
-      this.getNavListFuntion()
-    }
     async onPullDownRefresh() {
       await this.getSwiperList()
       await this.getNavListFuntion()
+      this.newTabs = []
+      this.currentPage = 1
+      await this.getData(this.newsType)
       wepy.stopPullDownRefresh()
       setTimeout(() => {
         wepy.showToast({
@@ -120,6 +189,13 @@
           duration: 2000
         })
       }, 800)
+    }
+    onReady() {
+      this.getSwiperList()
+      this.getNavListFuntion()
+      var date = new Date()
+      this.refreshTime = date.toLocaleTimeString()
+      this.getData()
     }
     onShareAppMessage(res) {
       return {

@@ -1,6 +1,7 @@
 <style lang="less">
 .newsMain{
   padding: 10px;
+  background: #fff;
 }
 </style>
 
@@ -26,7 +27,8 @@
     data = {
       name: 'myHtmlParserKiner',
       id: '',
-      textContent: ''
+      textContent: '',
+      bottomTitle: ''
     }
     methods = {
 
@@ -59,11 +61,18 @@
         })
       }, 500)
     }
+    onShareAppMessage(res) {
+      return {
+        title: this.bottomTitle,
+        path: `/pages/miniviews/webview?url=${this.id}&title=${this.bottomTitle}`
+      }
+    }
     onReady() {
       this.getNews()
     }
     onLoad(option) {
       this.id = option.id
+      this.bottomTitle = option.title
     }
   }
 

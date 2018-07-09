@@ -1,12 +1,18 @@
 <style lang="less">
   @import "./index.less";
-
+  .title_text{
+    margin: 0 10rpx;
+    display: inline;
+  }
 </style>
 <template>
   <view class="scroll_view_main">
       <view class="news_tabs-view" wx:for="{{newTabs}}" wx:key="{{index}}" @tap="tapNewsScrollView({{item}})">
         <block>
-          <view>{{item.title}}</view>
+          <image style="width: 75px; height: 60px; background-color: #eeeeee; float:left;margin-right:10rpx;" mode="aspectFill" src="{{item.image}}" />
+        </block>
+        <block>
+          <view class="title_text">{{item.title}}</view>
           <view class="news_tabs_view_date">{{item.gmt_create}}</view>
         </block>
       </view>
@@ -52,11 +58,11 @@
       tapNewsScrollView(item) {
         if (item.title_url) {
           wepy.navigateTo({
-            url: '/pages/miniviews/webview?url=' + item.title_url
+            url: `/pages/miniviews/webview?url=${item.title_url}&title=${item.title}`
           })
         } else {
           wepy.navigateTo({
-            url: '/pages/miniviews/newsview?id=' + item.id
+            url: `/pages/miniviews/newsview?id=${item.id}&title=${item.title}`
           })
         }
       }
